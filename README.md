@@ -32,6 +32,7 @@ private calculateOptimalRRSP(income: number, userMax: number): number {
   const maxAllowed = income * 0.18;
   return Math.min(maxAllowed, userMax);
 }
+
 ```
 src/
 ├── ai/
