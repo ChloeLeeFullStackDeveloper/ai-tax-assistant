@@ -1,0 +1,27 @@
+# Firebase key (secure!)
+server/firebase-service-account.json
+
+# Environment files
+client/.env
+server/.env
+
+# Node modules
+client/node_modules/
+server/node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Vite & NestJS caches
+client/.vite/
+server/dist/
+node_modules
+dist
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.development
+.env.test
