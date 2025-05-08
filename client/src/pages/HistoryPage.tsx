@@ -1,99 +1,47 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
 
-interface SuggestionEntry {
-  id: string;
-  input: {
-    income: number;
-    rrsp: number;
-    tuition: number;
-    dependents: number;
-    childcare: number;
-  };
-  taxSummary: {
-    taxOwed: number;
-    credits: number;
-    netPayable: number;
-  };
-  suggestions: string[];
-  timestamp: any; // Firestore timestamp
-}
+type TaxReport = {
+  timestamp: string;
+  income: number;
+  deductions: number;
+  credits: number;
+  federalTax: number;
+  provincialTax: number;
+  balanceOwing: number;
+};
 
 const HistoryPage: React.FC = () => {
-  const [history, setHistory] = useState<SuggestionEntry[]>([]);
+  const [history, setHistory] = useState<TaxReport[]>([]);
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/ai/history");
-        setHistory(res.data.suggestions);
-      } catch (err) {
-        console.error("Failed to load history:", err);
-      }
-    };
-    fetchHistory();
+    const stored = localStorage.getItem('taxHistory');
+    if (stored) setHistory(JSON.parse(stored));
   }, []);
 
-  const handleClear = async () => {
-    await axios.delete("http://localhost:3000/ai/history");
+  const clearHistory = () => {
+    localStorage.removeItem('taxHistory');
     setHistory([]);
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">🕒 Tax Suggestion History</h1>
-      <div className="flex gap-4 mb-4">
-        <button
-          onClick={handleClear}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Clear History
-        </button>
-        <button
-          onClick={() => window.print()}
-          className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-        >
-          Export to PDF
-        </button>
-      </div>
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-4">🕓 Tax Suggestion History</h1>
+      <button onClick={clearHistory} className="bg-gray-300 px-4 py-2 rounded mb-4">
+        Clear History
+      </button>
 
       {history.length === 0 ? (
         <p>No history yet.</p>
       ) : (
-        <ul className="space-y-6">
-          {history.map((item) => (
-            <li
-              key={item.id}
-              className="bg-white border border-gray-200 p-4 rounded shadow-sm"
-            >
-              <div className="mb-2">
-                <strong className="block text-gray-600">Input:</strong>
-                <pre className="bg-gray-50 p-2 rounded text-sm overflow-x-auto">
-                  {JSON.stringify(item.input, null, 2)}
-                </pre>
-              </div>
-
-              <div className="mb-2">
-                <strong className="block text-gray-600">Tax Summary:</strong>
-                <pre className="bg-gray-50 p-2 rounded text-sm overflow-x-auto">
-                  {JSON.stringify(item.taxSummary, null, 2)}
-                </pre>
-              </div>
-
-              <div className="mb-2">
-                <strong className="block text-gray-600">Suggestions:</strong>
-                <ul className="list-disc ml-6 text-sm text-gray-800">
-                  {item.suggestions.map((s, i) => (
-                    <li key={i}>{s}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="text-right text-xs text-gray-500">
-                {item.timestamp?.toDate
-                  ? item.timestamp.toDate().toLocaleString()
-                  : new Date(item.timestamp).toLocaleString()}
-              </div>
+        <ul className="space-y-4">
+          {history.map((entry, i) => (
+            <li key={i} className="border p-4 rounded shadow">
+              <p><strong>Date:</strong> {new Date(entry.timestamp).toLocaleString()}</p>
+              <p><strong>Income:</strong> ${entry.income.toFixed(2)}</p>
+              <p><strong>Credits:</strong> ${entry.credits.toFixed(2)}</p>
+              <p><strong>Federal Tax:</strong> ${entry.federalTax.toFixed(2)}</p>
+              <p><strong>Provincial Tax:</strong> ${entry.provincialTax.toFixed(2)}</p>
+              <p><strong>Balance:</strong> ${entry.balanceOwing.toFixed(2)}</p>
             </li>
           ))}
         </ul>

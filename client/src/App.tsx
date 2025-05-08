@@ -1,27 +1,32 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import TaxAssistantPage from './pages/TaxAssistantPage';
+import TaxFormWizard from './pages/TaxFormWizard';
+import TaxReportPage from './pages/TaxReportPage';
+import DashboardPage from './pages/DashboardPage';
 import HistoryPage from './pages/HistoryPage';
-
+import TaxAssistantPage from './pages/TaxAssistantPage';
 function App() {
   return (
     <Router>
-      <div className="bg-gray-100 min-h-screen">
-        <header className="bg-white shadow py-4 mb-6">
-          <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
-            <h1 className="text-xl font-bold text-blue-700">AI Tax Prep Tool</h1>
-            <nav className="space-x-4">
-              <Link to="/" className="text-blue-600 hover:underline">Home</Link>
-              <Link to="/history" className="text-blue-600 hover:underline">History</Link>
-            </nav>
-          </div>
+      <div className="p-4">
+        <header className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Tax Prep AI</h1>
+          <nav className="space-x-4">
+            <Link to="/">Dashboard</Link>
+            <Link to="/tax-wizard">Enter Tax Info</Link>
+            <Link to="/tax-report">Tax Report</Link>
+            <Link to="/history">History</Link>
+          </nav>
         </header>
 
-        <main className="max-w-6xl mx-auto px-4">
-          <Routes>
-            <Route path="/" element={<TaxAssistantPage />} />
-            <Route path="/history" element={<HistoryPage />} />
-          </Routes>
-        </main>
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/tax-wizard" element={<TaxFormWizard />} />
+          <Route path="/tax-report" element={<TaxReportPage />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/assistant" element={<TaxAssistantPage />} />
+
+        </Routes>
       </div>
     </Router>
   );
