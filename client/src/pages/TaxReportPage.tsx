@@ -1,28 +1,29 @@
 import React, { useEffect, useState, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-
-type TaxReport = {
-  timestamp: string;
-  income: number;
-  deductions: number;
-  credits: number;
-  federalTax: number;
-  provincialTax: number;
-  balanceOwing: number;
-};
+import { submitReportToFirebase } from '../utils/submitReportToFirebase';
+import { useAuth } from '../components/AuthContext';
 
 const TaxReportPage: React.FC = () => {
-  const [report, setReport] = useState<TaxReport | null>(null);
+  const [report, setReport] = useState<any | null>(null);
   const [showModal, setShowModal] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const history = JSON.parse(localStorage.getItem('taxHistory') || '[]');
     if (history.length > 0) {
-      setReport(history[history.length - 1]);
+      const latest = history[history.length - 1];
+      setReport(latest);
+
+      // Submit to Firestore
+      if (user) {
+        submitReportToFirebase(user, latest.taxSummary, latest.input)
+          .then((id) => console.log('Report saved with ID:', id))
+          .catch((err) => console.error('Error saving report:', err));
+      }
     }
-  }, []);
+  }, [user]);
 
   const handleDownloadPDF = async () => {
     if (!reportRef.current) return;

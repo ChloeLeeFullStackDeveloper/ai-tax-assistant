@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import StepIncomeInfo from "./steps/StepIncomeInfo";
-import StepDeductions from "./steps/StepDeductions";
-import StepCredits from "./steps/StepCredits";
-import StepSummary from "./steps/StepSummary";
+import StepIncomeInfo from "../steps/StepIncomeInfo";  
+import StepDeductions from "../steps/StepDeductions";
+import StepCredits from "../steps/StepCredits"; 
+import StepSummary from "../steps/StepSummary";
 
 const TaxFormWizard: React.FC = () => {
   const [step, setStep] = useState(0);
